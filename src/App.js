@@ -4,6 +4,7 @@ import "./App.css";
 
 function App() {
   const [movieTitle, setMovieTitle] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
 
   const handleInputChange = (evt) => {
     setMovieTitle(evt.target.value);
@@ -11,13 +12,14 @@ function App() {
 
 
   useEffect(() => {
-    // No api calls if input is empty, either by initial state, or on deletion.
-    if (movieTitle !== "") {
+    // No api calls if input is emppty or less than 3 characters.
+    if (movieTitle.length > 3) {
       axios
         .get(
           `http://www.omdbapi.com/?i=tt3896198&apikey=${process.env.REACT_APP_API_KEY}&s=${movieTitle}&type=movie`
         )
         .then((res) => {
+          setSearchResult(res.data.Search)
           console.log(res);
         })
         .catch((e) => {
@@ -36,16 +38,22 @@ function App() {
           <label htmlFor="title">Movie Title:</label>
           <input
             name="title"
-            placeholder="Type movie title to search..."
+            placeholder="Type movie title to search. At least 3 characters..."
             type="text"
             value={movieTitle}
             onChange={(e) => handleInputChange(e)}
+            className="searchBox"
           />
         </form>
 
         <section>
           <article>
             <h2>Results for "{movieTitle}"</h2>
+            <div>
+            {
+              searchResult.data
+            }
+            </div>
           </article>
 
           <article>
